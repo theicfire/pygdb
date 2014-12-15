@@ -1,0 +1,4 @@
+__pycache__/
+cython/
+part3/
+*.pyc
