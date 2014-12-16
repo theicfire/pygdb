@@ -1,7 +1,6 @@
 from optparse import OptionParser
 import inspect
-# TODO rename
-import deps.use_dwarf
+import cyout.use_dwarf
 
 class Pygdb:
     def __init__(self, progname):
@@ -29,8 +28,7 @@ class Pygdb:
     def mem_poke(self, addr, val):
         print 'mem_poke at {} with {}'.format(addr, val)
     def get_functions(self):
-        # TODO change from primes
-        return deps.use_dwarf.primes(0)
+        return cyout.use_dwarf.get_functions(0)
     def help(self):
         print "Possible queries:"
         print [x[0] for x in self.get_methods()]

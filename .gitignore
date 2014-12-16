@@ -2,3 +2,5 @@ __pycache__/
 cython/
 part3/
 *.pyc
+cyout/libdwarf_get_func_addr.so
+cyout/use_dwarf.so
