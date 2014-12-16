@@ -3,7 +3,7 @@ from run import Pygdb, take_input
 
 @pytest.fixture
 def pygdb():
-    return Pygdb()
+    return Pygdb('tracedprog2')
 
 class TestAll:
     def test_breakpoints(self, pygdb):
@@ -16,6 +16,13 @@ class TestAll:
         methods = pygdb.get_methods()
         assert isinstance(methods, list)
         assert isinstance(methods[0], tuple)
+
+    def test_fns(self, pygdb):
+        fns = pygdb.get_functions()
+        assert fns[0]['name'] == 'do_stuff'
+        assert fns[0]['low_pc'] == 0x4004f4
+        assert fns[1]['name'] == 'main'
+        assert fns[1]['low_pc'] == 0x400536
 
 class TestInput:
     def test_fns_called(self, monkeypatch, pygdb):

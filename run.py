@@ -1,13 +1,16 @@
 from optparse import OptionParser
 import inspect
+# TODO rename
+import deps.use_dwarf
 
 class Pygdb:
-    def __init__(self):
+    def __init__(self, progname):
         self.breakpoints = []
+        self.progname = progname
     def get_methods(self):
         # TODO give headers to methods like routes for easier names
         #return inspect.getmembers(self, predicate=inspect.ismethod)
-        return [('b', self.add_breakpoint), ('l', self.get_breakpoints)]
+        return [('b', self.add_breakpoint), ('l', self.get_breakpoints), ('f', self.get_functions)]
     def step(self):
         print 'step'
     def cont(self):
@@ -25,6 +28,9 @@ class Pygdb:
         print 'mem_peek', addr
     def mem_poke(self, addr, val):
         print 'mem_poke at {} with {}'.format(addr, val)
+    def get_functions(self):
+        # TODO change from primes
+        return deps.use_dwarf.primes(0)
     def help(self):
         print "Possible queries:"
         print [x[0] for x in self.get_methods()]
@@ -46,7 +52,7 @@ def take_input(pygdb, inp):
     return False
 
 if __name__ == "__main__":
-    pygdb = Pygdb()
+    pygdb = Pygdb('tracedprog2')
     while True:
         take_input(pygdb, raw_input(">>> "))
 
