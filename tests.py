@@ -1,14 +1,14 @@
 import pytest
-from run import Pygdb, take_input
+from run import Pygdb, take_input, NotRunningException
 
 @pytest.fixture
 def pygdb():
-    return Pygdb('tracedprog2')
+    return Pygdb()
 
 class TestAll:
     def test_breakpoints(self, pygdb):
-        pygdb.add_breakpoint(5)
-        assert pygdb.get_breakpoints() == [5]
+        with pytest.raises(NotRunningException):
+            pygdb.add_breakpoint(5)
     def test_help(self, pygdb):
         assert pygdb.help() == None
 
@@ -20,9 +20,32 @@ class TestAll:
     def test_fns(self, pygdb):
         fns = pygdb.get_functions()
         assert fns[0]['name'] == 'do_stuff'
-        assert fns[0]['low_pc'] == 0x4004f4
+        assert fns[0]['low_pc'] == 0x80483e4
         assert fns[1]['name'] == 'main'
-        assert fns[1]['low_pc'] == 0x400536
+        assert fns[1]['low_pc'] == 0x804841e
+
+    def test_breakpoint(self, pygdb):
+        assert not pygdb.loaded
+        pygdb.load_program('tracedprog2')
+        assert pygdb.loaded
+        child_pid = pygdb.child_pid
+        print 'CHILD IS', child_pid
+
+        pygdb.wait()
+        #assert pygdb.current_eip() == -0x488ffe30 # TODO why negative? Too high? But how?
+        print 'START', pygdb.current_eip()
+        pygdb.add_breakpoint(0x80483e4)
+        pygdb.start()
+        pygdb.wait()
+        assert pygdb.current_eip() == 0x80483e5
+        assert pygdb.loaded
+        pygdb.cont()
+        pygdb.wait()
+        # Should be finished
+        assert not pygdb.loaded
+        pygdb.cleanup_breakpoint()
+        assert False
+
 
 class TestInput:
     def test_fns_called(self, monkeypatch, pygdb):

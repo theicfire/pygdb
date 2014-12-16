@@ -1,11 +1,16 @@
 from optparse import OptionParser
 import inspect
 import cyout.use_dwarf
+import os
+from cyout.use_debuglib import *
 
+class NotRunningException(Exception):
+    pass
 class Pygdb:
-    def __init__(self, progname):
+    def __init__(self):
         self.breakpoints = []
-        self.progname = progname
+        self.loaded = False
+
     def get_methods(self):
         # TODO give headers to methods like routes for easier names
         #return inspect.getmembers(self, predicate=inspect.ismethod)
@@ -14,10 +19,13 @@ class Pygdb:
         print 'step'
     def cont(self):
         print 'continue'
-    def add_breakpoint(self, line):
-        print 'Adding breakpoint at ', line
-        line = int(line)
-        self.breakpoints.append(line)
+    def add_breakpoint(self, loc):
+        if not self.loaded:
+            raise NotRunningException("Load the program before adding breakpoints")
+        print 'Adding breakpoint at ', loc
+        loc = int(loc)
+        self.breakpoints.append(loc)
+        pycreate_breakpoint(self.child_pid, loc)
     def get_breakpoints(self):
         print 'breakpoints', self.breakpoints
         return self.breakpoints
@@ -31,6 +39,33 @@ class Pygdb:
         fns = cyout.use_dwarf.get_functions(0)
         for f in fns:
             print '{}: {}'.format(f['name'], hex(f['low_pc']))
+        return fns
+    def wait(self):
+        pywait()
+    def cleanup_breakpoint(self):
+        pycleanup_breakpoint()
+    # TODO there should be one continue, not a start and continue
+    def load_program(self, progname):
+        self.progname = progname
+        self.child_pid = os.fork()
+        if self.child_pid == 0:
+            pyrun_target(progname)
+        elif self.child_pid < 0:
+            raise Exception("Error: Fork")
+        self.loaded = True
+    def start(self):
+        pycontinue(self.child_pid)
+    def current_eip(self):
+        return pyget_child_eip(self.child_pid)
+    def cont(self):
+        rc = pyresume_from_breakpoint(self.child_pid)
+
+        if rc == 0:
+            print 'Child exited'
+            self.loaded = False
+        elif rc != 1:
+            raise Exception('Unexpected rc {}'.format(rc))
+
     def help(self):
         print "Possible queries:"
         print [x[0] for x in self.get_methods()]
@@ -52,7 +87,7 @@ def take_input(pygdb, inp):
     return False
 
 if __name__ == "__main__":
-    pygdb = Pygdb('tracedprog2')
+    pygdb = Pygdb()
     while True:
         take_input(pygdb, raw_input(">>> "))
 
