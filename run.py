@@ -22,7 +22,7 @@ class Pygdb:
     def add_breakpoint(self, loc):
         if not self.loaded:
             raise NotRunningException("Load the program before adding breakpoints")
-        print 'Adding breakpoint at ', loc
+        print 'Adding breakpoint at ', hex(loc)
         loc = int(loc)
         self.breakpoints.append(loc)
         pycreate_breakpoint(self.child_pid, loc)

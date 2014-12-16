@@ -33,7 +33,11 @@ class TestAll:
 
         pygdb.wait()
         #assert pygdb.current_eip() == -0x488ffe30 # TODO why negative? Too high? But how?
-        print 'START', pygdb.current_eip()
+        # TODO looking at the current_eip here.. why is it so different from use.py?
+        # Does it have to do with the program running in a different form.. (like in.. a bigger
+        # environment here)?
+        # I know that the child is going to start in some rando place at the start (before it
+        # even runs the program), but I don't know why the two are so very different
         pygdb.add_breakpoint(0x80483e4)
         pygdb.start()
         pygdb.wait()
@@ -44,7 +48,6 @@ class TestAll:
         # Should be finished
         assert not pygdb.loaded
         pygdb.cleanup_breakpoint()
-        assert False
 
 
 class TestInput:
