@@ -28,7 +28,9 @@ class Pygdb:
     def mem_poke(self, addr, val):
         print 'mem_poke at {} with {}'.format(addr, val)
     def get_functions(self):
-        return cyout.use_dwarf.get_functions(0)
+        fns = cyout.use_dwarf.get_functions(0)
+        for f in fns:
+            print '{}: {}'.format(f['name'], hex(f['low_pc']))
     def help(self):
         print "Possible queries:"
         print [x[0] for x in self.get_methods()]
