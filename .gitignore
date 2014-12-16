@@ -4,3 +4,5 @@ part3/
 *.pyc
 cyout/libdwarf_get_func_addr.so
 cyout/use_dwarf.so
+cyout/libdebug.so
+cyout/use_debuglib.so
