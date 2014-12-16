@@ -7,6 +7,8 @@ from cyout.use_debuglib import *
 class NotRunningException(Exception):
     pass
 class Pygdb:
+    WAIT_EXITED = 0
+    WAIT_STOPPED = 1
     def __init__(self):
         self.breakpoints = []
         self.loaded = False
@@ -17,8 +19,6 @@ class Pygdb:
         return [('b', self.add_breakpoint), ('l', self.get_breakpoints), ('f', self.get_functions)]
     def step(self):
         print 'step'
-    def cont(self):
-        print 'continue'
     def add_breakpoint(self, loc):
         if not self.loaded:
             raise NotRunningException("Load the program before adding breakpoints")
@@ -41,7 +41,10 @@ class Pygdb:
             print '{}: {}'.format(f['name'], hex(f['low_pc']))
         return fns
     def wait(self):
-        pywait()
+        ret = pywait()
+        if ret == 0:
+            self.loaded = False
+        return ret
     def cleanup_breakpoint(self):
         pycleanup_breakpoint()
     # TODO there should be one continue, not a start and continue
@@ -58,9 +61,11 @@ class Pygdb:
     def current_eip(self):
         return pyget_child_eip(self.child_pid)
     def cont(self):
+        if not self.loaded:
+            raise NotRunningException("Nothing running")
         rc = pyresume_from_breakpoint(self.child_pid)
 
-        if rc == 0:
+        if rc == Pygdb.WAIT_EXITED:
             print 'Child exited'
             self.loaded = False
         elif rc != 1:

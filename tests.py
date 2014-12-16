@@ -24,12 +24,10 @@ class TestAll:
         assert fns[1]['name'] == 'main'
         assert fns[1]['low_pc'] == 0x804841e
 
-    def test_breakpoint(self, pygdb):
+    def Ntest_breakpoint(self, pygdb):
         assert not pygdb.loaded
         pygdb.load_program('tracedprog2')
         assert pygdb.loaded
-        child_pid = pygdb.child_pid
-        print 'CHILD IS', child_pid
 
         pygdb.wait()
         #assert pygdb.current_eip() == -0x488ffe30 # TODO why negative? Too high? But how?
@@ -49,6 +47,39 @@ class TestAll:
         assert not pygdb.loaded
         pygdb.cleanup_breakpoint()
 
+    def Ntest_no_breakpoint(self, pygdb):
+        assert not pygdb.loaded
+        pygdb.load_program('traced_c_loop')
+        assert pygdb.loaded
+
+        assert pygdb.wait() == Pygdb.WAIT_STOPPED
+        pygdb.start()
+
+        assert pygdb.wait() == Pygdb.WAIT_EXITED
+        assert not pygdb.loaded
+        pygdb.cleanup_breakpoint()
+
+    def test_breakpoint2(self, pygdb):
+        assert not pygdb.loaded
+        pygdb.load_program('traced_c_loop')
+        print 'load program'
+        assert pygdb.loaded
+
+        assert pygdb.wait() == Pygdb.WAIT_STOPPED
+        pygdb.add_breakpoint(0x8048429)
+
+        print 'Now start'
+        pygdb.start()
+        assert pygdb.wait() == Pygdb.WAIT_STOPPED
+        assert pygdb.current_eip() == 0x804842a
+        assert pygdb.loaded
+        pygdb.cont()
+        print 'Then wait'
+        assert pygdb.wait() == Pygdb.WAIT_EXITED
+        assert not pygdb.loaded
+        with pytest.raises(NotRunningException):
+            pygdb.cont()
+        pygdb.cleanup_breakpoint()
 
 class TestInput:
     def test_fns_called(self, monkeypatch, pygdb):
