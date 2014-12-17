@@ -24,7 +24,8 @@ class TestAll:
         assert fns[1]['name'] == 'main'
         assert fns[1]['low_pc'] == 0x804841e
 
-    def Ntest_breakpoint(self, pygdb):
+    def test_breakpoint(self):
+        pygdb = Pygdb()
         assert not pygdb.loaded
         pygdb.load_program('tracedprog2')
         assert pygdb.loaded
@@ -42,12 +43,13 @@ class TestAll:
         assert pygdb.current_eip() == 0x80483e5
         assert pygdb.loaded
         pygdb.cont()
-        pygdb.wait()
+        with pytest.raises(NotRunningException):
+            pygdb.cont()
         # Should be finished
         assert not pygdb.loaded
         pygdb.cleanup_breakpoint()
 
-    def Ntest_no_breakpoint(self, pygdb):
+    def test_no_breakpoint(self, pygdb):
         assert not pygdb.loaded
         pygdb.load_program('traced_c_loop')
         assert pygdb.loaded
@@ -57,25 +59,43 @@ class TestAll:
 
         assert pygdb.wait() == Pygdb.WAIT_EXITED
         assert not pygdb.loaded
-        pygdb.cleanup_breakpoint()
 
     def test_breakpoint2(self, pygdb):
         assert not pygdb.loaded
         pygdb.load_program('traced_c_loop')
-        print 'load program'
         assert pygdb.loaded
 
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
         pygdb.add_breakpoint(0x8048429)
 
-        print 'Now start'
         pygdb.start()
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
         assert pygdb.current_eip() == 0x804842a
         assert pygdb.loaded
         pygdb.cont()
-        print 'Then wait'
         assert pygdb.wait() == Pygdb.WAIT_EXITED
+        assert not pygdb.loaded
+        with pytest.raises(NotRunningException):
+            pygdb.cont()
+        pygdb.cleanup_breakpoint()
+
+    def test_breakpoint_in_loop(self, pygdb):
+        assert not pygdb.loaded
+        pygdb.load_program('traced_c_loop')
+        assert pygdb.loaded
+
+        assert pygdb.wait() == Pygdb.WAIT_STOPPED
+        pygdb.add_breakpoint(0x8048414)
+
+        pygdb.start()
+        assert pygdb.wait() == Pygdb.WAIT_STOPPED
+        assert pygdb.current_eip() == 0x8048415
+        assert pygdb.loaded
+        pygdb.cont()
+        pygdb.cont()
+        pygdb.cont()
+        assert pygdb.loaded
+        pygdb.cont()
         assert not pygdb.loaded
         with pytest.raises(NotRunningException):
             pygdb.cont()
