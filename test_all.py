@@ -87,7 +87,9 @@ class TestAll:
         assert pygdb.run() == Pygdb.WAIT_STOPPED
         assert pygdb.current_eip() == 0x8048415
         assert pygdb.step() == Pygdb.WAIT_STOPPED
-        assert pygdb.current_eip() > 0x8048415
+        assert pygdb.current_eip() == 0x8048417
+        assert pygdb.step() == Pygdb.WAIT_STOPPED
+        assert pygdb.current_eip() == 0x804841a
         assert pygdb.cont() == Pygdb.WAIT_STOPPED
         pygdb.cleanup_breakpoint()
 
