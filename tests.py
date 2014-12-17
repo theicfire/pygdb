@@ -119,3 +119,11 @@ class TestInput:
         monkeypatch.setattr(pygdb, 'get_methods', lambda: [('first', bad_fn)])
         assert take_input(pygdb, 'first') == False
 
+    def test_breakpoint_in_loop(self, pygdb):
+        pass
+        # Same as above, except using take_input
+        #take_input(pygdb, 'load traced_c_loop')
+        #take_input(pygdb, 'b 0x8048414')
+        # Assert
+        #take_input(pygdb, 'b 0x8048414')
+
