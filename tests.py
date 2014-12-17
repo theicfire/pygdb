@@ -39,7 +39,6 @@ class TestAll:
         # even runs the program), but I don't know why the two are so very different
         pygdb.add_breakpoint(0x80483e4)
         pygdb.run()
-        pygdb.wait()
         assert pygdb.current_eip() == 0x80483e5
         assert pygdb.loaded
         pygdb.cont()
@@ -55,9 +54,8 @@ class TestAll:
         assert pygdb.loaded
 
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
-        pygdb.run()
+        pygdb.run() == Pygdb.WAIT_EXITED
 
-        assert pygdb.wait() == Pygdb.WAIT_EXITED
         assert not pygdb.loaded
 
     def test_breakpoint2(self, pygdb):
@@ -68,8 +66,7 @@ class TestAll:
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
         pygdb.add_breakpoint(0x8048429)
 
-        pygdb.run()
-        assert pygdb.wait() == Pygdb.WAIT_STOPPED
+        pygdb.run() == Pygdb.WAIT_STOPPED
         assert pygdb.current_eip() == 0x804842a
         assert pygdb.loaded
         pygdb.cont()
@@ -87,8 +84,7 @@ class TestAll:
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
         pygdb.add_breakpoint(0x8048414)
 
-        pygdb.run()
-        assert pygdb.wait() == Pygdb.WAIT_STOPPED
+        assert pygdb.run() == Pygdb.WAIT_STOPPED
         assert pygdb.current_eip() == 0x8048415
         assert pygdb.loaded
         pygdb.cont()

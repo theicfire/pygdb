@@ -16,7 +16,12 @@ class Pygdb:
     def get_methods(self):
         # TODO give headers to methods like routes for easier names
         #return inspect.getmembers(self, predicate=inspect.ismethod)
-        return [('b', self.add_breakpoint), ('l', self.get_breakpoints), ('f', self.get_functions)]
+        return [('b', self.add_breakpoint),
+                ('gb', self.get_breakpoints),
+                ('f', self.get_functions),
+                ('load', self.load_program),
+                ('r', self.run),
+                ('c', self.cont)]
     def step(self):
         print 'step'
     def add_breakpoint(self, loc):
@@ -58,6 +63,7 @@ class Pygdb:
         self.loaded = True
     def run(self):
         pycontinue(self.child_pid)
+        return self.wait()
     def current_eip(self):
         return pyget_child_eip(self.child_pid)
     def cont(self):
