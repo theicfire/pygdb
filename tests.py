@@ -30,7 +30,6 @@ class TestAll:
         pygdb.load_program('tracedprog2')
         assert pygdb.loaded
 
-        pygdb.wait()
         #assert pygdb.current_eip() == -0x488ffe30 # TODO why negative? Too high? But how?
         # TODO looking at the current_eip here.. why is it so different from use.py?
         # Does it have to do with the program running in a different form.. (like in.. a bigger
@@ -50,20 +49,18 @@ class TestAll:
 
     def test_no_breakpoint(self, pygdb):
         assert not pygdb.loaded
-        pygdb.load_program('traced_c_loop')
+        pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
         assert pygdb.loaded
 
-        assert pygdb.wait() == Pygdb.WAIT_STOPPED
         pygdb.run() == Pygdb.WAIT_EXITED
 
         assert not pygdb.loaded
 
     def test_breakpoint2(self, pygdb):
         assert not pygdb.loaded
-        pygdb.load_program('traced_c_loop')
+        pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
         assert pygdb.loaded
 
-        assert pygdb.wait() == Pygdb.WAIT_STOPPED
         pygdb.add_breakpoint(0x8048429)
 
         pygdb.run() == Pygdb.WAIT_STOPPED
@@ -78,10 +75,9 @@ class TestAll:
 
     def test_breakpoint_in_loop(self, pygdb):
         assert not pygdb.loaded
-        pygdb.load_program('traced_c_loop')
+        pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
         assert pygdb.loaded
 
-        assert pygdb.wait() == Pygdb.WAIT_STOPPED
         pygdb.add_breakpoint(0x8048414)
 
         assert pygdb.run() == Pygdb.WAIT_STOPPED

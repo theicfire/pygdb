@@ -61,6 +61,7 @@ class Pygdb:
         elif self.child_pid < 0:
             raise Exception("Error: Fork")
         self.loaded = True
+        return self.wait()
     def run(self):
         pycontinue(self.child_pid)
         return self.wait()
