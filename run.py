@@ -23,8 +23,9 @@ class Pygdb:
                 ('gb', self.get_breakpoints),
                 ('f', self.get_functions),
                 ('load', self.load_program),
-                ('r', self.run),
-                ('c', self.cont)]
+                ('run', self.run),
+                ('c', self.cont),
+                ('regs', self.get_regs)]
     def step(self):
         print 'step'
     def add_breakpoint(self, loc):
@@ -39,7 +40,7 @@ class Pygdb:
         print 'breakpoints', self.breakpoints
         return self.breakpoints
     def get_regs(self):
-        print 'get_regs'
+        print 'eip:', hex(pyget_child_eip(self.child_pid))
     def mem_peek(self, addr):
         print 'mem_peek', addr
     def mem_poke(self, addr, val):

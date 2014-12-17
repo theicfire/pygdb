@@ -136,7 +136,9 @@ class TestInput:
         take_input(pygdb, 'c')
         assert 'NotRunningException' in capsys_output_only(capsys)
 
-        take_input(pygdb, 'r')
+        take_input(pygdb, 'run')
+        take_input(pygdb, 'regs')
+        assert 'eip: 0x8048415' in capsys_output_only(capsys)
         take_input(pygdb, 'c')
         take_input(pygdb, 'c')
         take_input(pygdb, 'c')
