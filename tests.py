@@ -67,10 +67,12 @@ class TestAll:
         assert pygdb.current_eip() == 0x804842a
         assert pygdb.loaded
         pygdb.cont()
-        assert pygdb.wait() == Pygdb.WAIT_EXITED
         assert not pygdb.loaded
         with pytest.raises(NotRunningException):
             pygdb.cont()
+        # Multiple calls to wait after the program has ended is ok
+        assert pygdb.wait() == Pygdb.WAIT_EXITED
+        assert pygdb.wait() == Pygdb.WAIT_EXITED
         pygdb.cleanup_breakpoint()
 
     def test_breakpoint_in_loop(self, pygdb):
