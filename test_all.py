@@ -83,11 +83,11 @@ class TestAll:
 
     def test_step(self, pygdb):
         pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
-        pygdb.add_breakpoint(0x8048429)
+        pygdb.add_breakpoint(0x8048414)
         assert pygdb.run() == Pygdb.WAIT_STOPPED
-        assert pygdb.current_eip() == 0x804842a
+        assert pygdb.current_eip() == 0x8048415
         assert pygdb.step() == Pygdb.WAIT_STOPPED
-        assert pygdb.current_eip() > 0x804842a
+        assert pygdb.current_eip() > 0x8048415
         assert pygdb.cont() == Pygdb.WAIT_STOPPED
         pygdb.cleanup_breakpoint()
 
@@ -161,7 +161,8 @@ if __name__ == "__main__":
     pygdb.add_breakpoint(0x8048429)
     assert pygdb.run() == Pygdb.WAIT_STOPPED
     assert pygdb.current_eip() == 0x804842a
-    print pygdb.step()
+    assert pygdb.step() == Pygdb.WAIT_STOPPED
+    assert pygdb.current_eip() > 0x804842a
     assert pygdb.cont() == Pygdb.WAIT_STOPPED
     pygdb.cleanup_breakpoint()
 
