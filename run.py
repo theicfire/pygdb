@@ -56,7 +56,7 @@ class Pygdb:
         elif self.child_pid < 0:
             raise Exception("Error: Fork")
         self.loaded = True
-    def start(self):
+    def run(self):
         pycontinue(self.child_pid)
     def current_eip(self):
         return pyget_child_eip(self.child_pid)

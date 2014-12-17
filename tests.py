@@ -38,7 +38,7 @@ class TestAll:
         # I know that the child is going to start in some rando place at the start (before it
         # even runs the program), but I don't know why the two are so very different
         pygdb.add_breakpoint(0x80483e4)
-        pygdb.start()
+        pygdb.run()
         pygdb.wait()
         assert pygdb.current_eip() == 0x80483e5
         assert pygdb.loaded
@@ -55,7 +55,7 @@ class TestAll:
         assert pygdb.loaded
 
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
-        pygdb.start()
+        pygdb.run()
 
         assert pygdb.wait() == Pygdb.WAIT_EXITED
         assert not pygdb.loaded
@@ -68,7 +68,7 @@ class TestAll:
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
         pygdb.add_breakpoint(0x8048429)
 
-        pygdb.start()
+        pygdb.run()
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
         assert pygdb.current_eip() == 0x804842a
         assert pygdb.loaded
@@ -87,7 +87,7 @@ class TestAll:
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
         pygdb.add_breakpoint(0x8048414)
 
-        pygdb.start()
+        pygdb.run()
         assert pygdb.wait() == Pygdb.WAIT_STOPPED
         assert pygdb.current_eip() == 0x8048415
         assert pygdb.loaded
