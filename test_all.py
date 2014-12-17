@@ -25,13 +25,14 @@ class TestAll:
         assert isinstance(methods[0], tuple)
 
     def test_fns(self, pygdb):
+        pygdb.load_program('tracedprog2')
         fns = pygdb.get_functions()
         assert fns[0]['name'] == 'do_stuff'
         assert fns[0]['low_pc'] == 0x80483e4
         assert fns[1]['name'] == 'main'
         assert fns[1]['low_pc'] == 0x804841e
 
-    def test_breakpoint(self):
+    def test_breakpoint_prog1(self):
         pygdb = Pygdb()
         assert not pygdb.loaded
         pygdb.load_program('tracedprog2')
@@ -44,9 +45,8 @@ class TestAll:
         # I know that the child is going to start in some rando place at the start (before it
         # even runs the program), but I don't know why the two are so very different
         pygdb.add_breakpoint(0x80483e4)
-        pygdb.run()
+        assert pygdb.run() == Pygdb.WAIT_STOPPED
         assert pygdb.current_eip() == 0x80483e5
-        assert pygdb.loaded
         pygdb.cont()
         with pytest.raises(NotRunningException):
             pygdb.cont()
@@ -56,23 +56,23 @@ class TestAll:
 
     def test_no_breakpoint(self, pygdb):
         assert not pygdb.loaded
-        pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
+        assert pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
         assert pygdb.loaded
-
-        pygdb.run() == Pygdb.WAIT_EXITED
-
+        assert pygdb.run() == Pygdb.WAIT_EXITED
         assert not pygdb.loaded
+
+    def test_invalid_wait(self, pygdb):
+        with pytest.raises(NotLoadedException):
+            pygdb.wait()
 
     def test_breakpoint2(self, pygdb):
         assert not pygdb.loaded
-        with pytest.raises(NotLoadedException):
-            pygdb.wait()
         pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
         assert pygdb.loaded
 
         pygdb.add_breakpoint(0x8048429)
 
-        pygdb.run() == Pygdb.WAIT_STOPPED
+        assert pygdb.run() == Pygdb.WAIT_STOPPED
         assert pygdb.current_eip() == 0x804842a
         assert pygdb.loaded
         pygdb.cont()
@@ -81,9 +81,18 @@ class TestAll:
             pygdb.cont()
         pygdb.cleanup_breakpoint()
 
+    #def test_step(self, pygdb):
+        #pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
+        #pygdb.add_breakpoint(0x8048429)
+        #assert pygdb.run() == Pygdb.WAIT_STOPPED
+        #assert pygdb.current_eip() == 0x804842a
+        #print pygdb.step()
+        #assert pygdb.cont() == Pygdb.WAIT_EXITED
+        #pygdb.cleanup_breakpoint()
+
     def test_breakpoint_in_loop(self, pygdb):
         assert not pygdb.loaded
-        pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
+        assert pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
         assert pygdb.loaded
 
         pygdb.add_breakpoint(0x8048414)
@@ -145,3 +154,12 @@ class TestInput:
         take_input(pygdb, 'c')
         assert 'Child exited' in capsys_output_only(capsys)
 
+if __name__ == "__main__":
+    pygdb = Pygdb()
+    pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
+    pygdb.add_breakpoint(0x8048429)
+    assert pygdb.run() == Pygdb.WAIT_STOPPED
+    assert pygdb.current_eip() == 0x804842a
+    print pygdb.step()
+    assert pygdb.cont() == Pygdb.WAIT_EXITED
+    pygdb.cleanup_breakpoint()

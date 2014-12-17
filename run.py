@@ -27,7 +27,7 @@ class Pygdb:
                 ('c', self.cont),
                 ('regs', self.get_regs)]
     def step(self):
-        if self.running:
+        if not self.running:
             raise NotRunningException("Already running")
         s = pystep(self.child_pid)
         self.set_wait_status(s)
@@ -56,7 +56,7 @@ class Pygdb:
         print 'mem_poke at {} with {}'.format(addr, val)
 
     def get_functions(self):
-        fns = cyout.use_dwarf.get_functions(0)
+        fns = cyout.use_dwarf.get_functions(self.progname)
         for f in fns:
             print '{}: {}'.format(f['name'], hex(f['low_pc']))
         return fns
@@ -107,7 +107,7 @@ class Pygdb:
             self.loaded = False
             self.running = False
         elif s != 1:
-            raise Exception('Unexpected rc {}'.format(rc))
+            raise Exception('Unexpected status {}'.format(s))
 
     def help(self):
         print "Possible queries:"
@@ -134,7 +134,5 @@ def take_input(pygdb, inp):
     return False
 
 if __name__ == "__main__":
-    pygdb = Pygdb()
-    while True:
-        take_input(pygdb, raw_input(">>> "))
+    pass
 
