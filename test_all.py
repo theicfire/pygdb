@@ -81,14 +81,14 @@ class TestAll:
             pygdb.cont()
         pygdb.cleanup_breakpoint()
 
-    #def test_step(self, pygdb):
-        #pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
-        #pygdb.add_breakpoint(0x8048429)
-        #assert pygdb.run() == Pygdb.WAIT_STOPPED
-        #assert pygdb.current_eip() == 0x804842a
-        #print pygdb.step()
-        #assert pygdb.cont() == Pygdb.WAIT_EXITED
-        #pygdb.cleanup_breakpoint()
+    def test_step(self, pygdb):
+        pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
+        pygdb.add_breakpoint(0x8048429)
+        assert pygdb.run() == Pygdb.WAIT_STOPPED
+        assert pygdb.current_eip() == 0x804842a
+        print pygdb.step()
+        assert pygdb.cont() == Pygdb.WAIT_STOPPED
+        pygdb.cleanup_breakpoint()
 
     def test_breakpoint_in_loop(self, pygdb):
         assert not pygdb.loaded
@@ -161,5 +161,6 @@ if __name__ == "__main__":
     assert pygdb.run() == Pygdb.WAIT_STOPPED
     assert pygdb.current_eip() == 0x804842a
     print pygdb.step()
-    assert pygdb.cont() == Pygdb.WAIT_EXITED
+    assert pygdb.cont() == Pygdb.WAIT_STOPPED
     pygdb.cleanup_breakpoint()
+

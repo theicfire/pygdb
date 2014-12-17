@@ -10,8 +10,8 @@ interactive:
 	LD_LIBRARY_PATH=`pwd`/cyout:$LD_LIBRARY_PATH python run.py
 
 sub-make:
-	cd cwrappin/cython_set_breakpoint && make clean && make py && cd ../..
-	cd cwrappin/cython_get_fns && make clean && make standard && cd ../..
+	cd cython/dwarflib && make clean && make standard && cd ../..
+	cd cython/ptracelib && make clean && make py && cd ../..
 
 run-fns:
 	LD_LIBRARY_PATH=`pwd`/cyout:$LD_LIBRARY_PATH python use.py
