@@ -1,0 +1,91 @@
+commit 06c09f363f1b5d0b119efc0a1f6570cc50c636cc
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Wed Dec 17 15:19:35 2014 -0500
+
+    get_functions takes any name
+
+commit 964e8b60fd3a992bd9c7f785b11b9cc3d5ae111f
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Tue Dec 16 13:00:21 2014 -0500
+
+    Correct directories for Make file
+
+commit 80c92814068a41cfd6008c635049a5a47287cd3c
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Tue Dec 16 12:59:56 2014 -0500
+
+    Renaming
+
+commit 64053901499215a5ec0ba3b6c358954487897f41
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Tue Dec 16 12:56:46 2014 -0500
+
+    Removing deps/
+
+commit 33a386a71e9f6c2bfb669c487f3b3eb0dab4cfc7
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Tue Dec 16 12:55:51 2014 -0500
+
+    Renamed from primes to get_functions
+
+commit 715d019b6727c09649310a8c4ec6ddb959011e51
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Tue Dec 16 12:46:17 2014 -0500
+
+    Output into ../cyout
+
+commit 6bbab86acf6fd0731a412009417b1b7f335948b5
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Tue Dec 16 12:20:23 2014 -0500
+
+    Printing hex
+
+commit c04cda3f684eb4a6e8b33d962574d884b7a08085
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Mon Dec 15 23:49:48 2014 -0500
+
+    gitignore update
+
+commit a192e8885e8cc7b5fd99a792a346eb55e517c40c
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Mon Dec 15 23:48:28 2014 -0500
+
+    MAX_FNS constant
+
+commit 2489969b4fab8f4cd43dd948164bd35966929726
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Mon Dec 15 23:44:19 2014 -0500
+
+    Makefile cleaning update
+
+commit 2b0081c53714c4918560ce744a95950d5439cd2b
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Mon Dec 15 23:43:37 2014 -0500
+
+    c can run by itself for testing
+
+commit 07d6a43c505fe0b3053ad7bcdb763c9c1814d538
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Mon Dec 15 22:44:16 2014 -0500
+
+    Cleaning
+
+commit 681babffd4cfca1a5ea434d4d452d33e9057d1f9
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Mon Dec 15 22:43:39 2014 -0500
+
+    Holy shit interfacing with dwarfs in python
+
+commit ac8513a78f78a10de3efec58211244f20a7237cd
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Mon Dec 15 22:22:20 2014 -0500
+
+    Now using dwarf_get_func_addr
+
+commit 9b053c1bc3f8cdbbfca637cad8dcdf60e652eb98
+Author: Chase Lambert <theicfire@gmail.com>
+Date:   Mon Dec 15 17:20:53 2014 -0500
+
+    Cython works with dwarf!
+    
+    Got this from other repo
