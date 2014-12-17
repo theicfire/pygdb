@@ -6,6 +6,8 @@ from cyout.use_debuglib import *
 
 class NotRunningException(Exception):
     pass
+class NotLoadedException(Exception):
+    pass
 class Pygdb:
     WAIT_EXITED = 0
     WAIT_STOPPED = 1
@@ -27,7 +29,7 @@ class Pygdb:
         print 'step'
     def add_breakpoint(self, loc):
         if not self.loaded:
-            raise NotRunningException("Load the program before adding breakpoints")
+            raise NotLoadedException("Load the program before adding breakpoints")
         print 'Adding breakpoint at ', loc
         if type(loc) == str:
             loc = int(loc, 16)
@@ -107,6 +109,8 @@ def take_input(pygdb, inp):
         pygdb.help()
     except NotRunningException as e:
         print 'NotRunningException:', e
+    except NotLoadedException as e:
+        print 'NotLoadedException', e
     return False
 
 if __name__ == "__main__":

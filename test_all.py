@@ -1,5 +1,5 @@
 import pytest
-from run import Pygdb, take_input, NotRunningException
+from run import Pygdb, take_input, NotRunningException, NotLoadedException
 import sys
 
 @pytest.fixture
@@ -14,7 +14,7 @@ def capsys_output_only(capsys):
 
 class TestAll:
     def test_breakpoints(self, pygdb):
-        with pytest.raises(NotRunningException):
+        with pytest.raises(NotLoadedException):
             pygdb.add_breakpoint(5)
     def test_help(self, pygdb):
         assert pygdb.help() == None
@@ -127,7 +127,8 @@ class TestInput:
         assert take_input(pygdb, 'first') == False
 
     def test_breakpoint_in_loop(self, pygdb, capsys):
-        #Same as above, except using take_input
+        take_input(pygdb, 'b 0x8048414')
+        assert 'NotLoadedException' in capsys_output_only(capsys)
         take_input(pygdb, 'load traced_c_loop')
         take_input(pygdb, 'b 0x8048414')
         assert 'Adding breakpoint at  0x8048414' in capsys_output_only(capsys)
