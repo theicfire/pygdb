@@ -1,9 +1,16 @@
 import pytest
 from run import Pygdb, take_input, NotRunningException
+import sys
 
 @pytest.fixture
 def pygdb():
     return Pygdb()
+
+def capsys_output_only(capsys):
+    out, err = capsys.readouterr()
+    print out # Put it back out
+    assert err == ''
+    return out
 
 class TestAll:
     def test_breakpoints(self, pygdb):
@@ -119,11 +126,20 @@ class TestInput:
         monkeypatch.setattr(pygdb, 'get_methods', lambda: [('first', bad_fn)])
         assert take_input(pygdb, 'first') == False
 
-    def test_breakpoint_in_loop(self, pygdb):
-        pass
-        # Same as above, except using take_input
-        #take_input(pygdb, 'load traced_c_loop')
-        #take_input(pygdb, 'b 0x8048414')
-        # Assert
-        #take_input(pygdb, 'b 0x8048414')
+    def test_breakpoint_in_loop(self, pygdb, capsys):
+        #Same as above, except using take_input
+        take_input(pygdb, 'load traced_c_loop')
+        take_input(pygdb, 'b 0x8048414')
+        assert 'Adding breakpoint at  0x8048414' in capsys_output_only(capsys)
+
+        take_input(pygdb, 'c')
+        assert 'NotRunningException' in capsys_output_only(capsys)
+
+        take_input(pygdb, 'r')
+        take_input(pygdb, 'c')
+        take_input(pygdb, 'c')
+        take_input(pygdb, 'c')
+        assert 'Child exited' not in capsys_output_only(capsys)
+        take_input(pygdb, 'c')
+        assert 'Child exited' in capsys_output_only(capsys)
 

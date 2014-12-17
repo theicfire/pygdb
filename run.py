@@ -12,6 +12,7 @@ class Pygdb:
     def __init__(self):
         self.breakpoints = []
         self.loaded = False
+        self.running = False
 
     def get_methods(self):
         # TODO give headers to methods like routes for easier names
@@ -28,7 +29,8 @@ class Pygdb:
         if not self.loaded:
             raise NotRunningException("Load the program before adding breakpoints")
         print 'Adding breakpoint at ', loc
-        loc = int(loc)
+        if type(loc) == str:
+            loc = int(loc, 16)
         self.breakpoints.append(loc)
         pycreate_breakpoint(self.child_pid, loc)
     def get_breakpoints(self):
@@ -49,11 +51,13 @@ class Pygdb:
         ret = pywait()
         if ret == 0:
             self.loaded = False
+            self.running = False
         return ret
     def cleanup_breakpoint(self):
         pycleanup_breakpoint()
     # TODO there should be one continue, not a start and continue
     def load_program(self, progname):
+        print 'loading'
         self.progname = progname
         self.child_pid = os.fork()
         if self.child_pid == 0:
@@ -63,18 +67,23 @@ class Pygdb:
         self.loaded = True
         return self.wait()
     def run(self):
+        if self.running:
+            raise NotRunningException("Already running")
         pycontinue(self.child_pid)
-        return self.wait()
+        ret = self.wait()
+        self.running = True
+        return ret
     def current_eip(self):
         return pyget_child_eip(self.child_pid)
     def cont(self):
-        if not self.loaded:
+        if not self.running:
             raise NotRunningException("Nothing running")
         rc = pyresume_from_breakpoint(self.child_pid)
 
         if rc == Pygdb.WAIT_EXITED:
             print 'Child exited'
             self.loaded = False
+            self.running = False
         elif rc != 1:
             raise Exception('Unexpected rc {}'.format(rc))
 
@@ -96,6 +105,8 @@ def take_input(pygdb, inp):
     except TypeError as e:
         print 'TypeError:', e
         pygdb.help()
+    except NotRunningException as e:
+        print 'NotRunningException:', e
     return False
 
 if __name__ == "__main__":
