@@ -25,13 +25,20 @@ class Pygdb:
                 ('load', self.load_program),
                 ('run', self.run),
                 ('c', self.cont),
-                ('regs', self.get_regs)]
+                ('regs', self.get_regs),
+                ('s', self.step),
+                ('example', self.example)]
     def step(self):
         if not self.running:
             raise NotRunningException("Already running")
         s = pystep(self.child_pid)
         self.set_wait_status(s)
         return s
+
+    def example(self):
+        self.load_program('traced_c_loop')
+        self.add_breakpoint(0x8048414)
+        self.run()
 
     def add_breakpoint(self, loc):
         if not self.loaded:
@@ -134,5 +141,7 @@ def take_input(pygdb, inp):
     return False
 
 if __name__ == "__main__":
-    pass
+    pygdb = Pygdb()
+    while True:
+        take_input(pygdb, raw_input(">>> "))
 
