@@ -65,6 +65,8 @@ class TestAll:
 
     def test_breakpoint2(self, pygdb):
         assert not pygdb.loaded
+        with pytest.raises(NotLoadedException):
+            pygdb.wait()
         pygdb.load_program('traced_c_loop') == Pygdb.WAIT_STOPPED
         assert pygdb.loaded
 
@@ -77,9 +79,6 @@ class TestAll:
         assert not pygdb.loaded
         with pytest.raises(NotRunningException):
             pygdb.cont()
-        # Multiple calls to wait after the program has ended is ok
-        assert pygdb.wait() == Pygdb.WAIT_EXITED
-        assert pygdb.wait() == Pygdb.WAIT_EXITED
         pygdb.cleanup_breakpoint()
 
     def test_breakpoint_in_loop(self, pygdb):
