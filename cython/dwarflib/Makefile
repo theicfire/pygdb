@@ -1,4 +1,6 @@
-all:
+all: tracedprog2
+
+tracedprog2:
 	gcc -Wall -Wextra -std=c99 -g -o tracedprog2 tracedprog2.c
 
 run: all

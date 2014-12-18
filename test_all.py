@@ -169,15 +169,4 @@ class TestInput:
 
 if __name__ == "__main__":
     pygdb = Pygdb()
-    pygdb.load_program('hello') == Pygdb.WAIT_STOPPED
-    pygdb.add_breakpoint(0x8048080)
-    assert pygdb.run() == Pygdb.WAIT_STOPPED
-    print hex(pygdb.current_eip())
-    assert pygdb.step() == Pygdb.WAIT_STOPPED
-    print hex(pygdb.current_eip())
-    assert pygdb.step() == Pygdb.WAIT_STOPPED
-    print hex(pygdb.current_eip())
-    assert pygdb.step() == Pygdb.WAIT_STOPPED
-    print hex(pygdb.current_eip())
-    pygdb.cleanup_breakpoint()
 
