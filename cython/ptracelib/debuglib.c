@@ -115,6 +115,7 @@ debug_breakpoint* create_breakpoint(pid_t pid, void* addr)
 {
     debug_breakpoint* bp = malloc(sizeof(*bp));
     bp->addr = addr;
+    bp->was_continue = 1;
     enable_breakpoint(pid, bp);
     return bp;
 }
@@ -136,9 +137,9 @@ int stopped_at_breakpoint(pid_t pid, debug_breakpoint* bp)
     /* Make sure we indeed are stopped at bp */
     /*printf("reg is %ld, bp is %ld\n", regs.eip, (unsigned long) bp->addr + 1);*/
 #ifdef ENVIRONMENT32
-    return regs.eip == (long) bp->addr + 1;
+    return (regs.eip == (long) bp->addr + 1) && bp->was_continue;
 #else
-    return regs.rip == (unsigned long) bp->addr + 1;
+    return (regs.rip == (unsigned long) bp->addr + 1) && bp->was_continue;
 #endif
 }
 
@@ -148,6 +149,7 @@ int step_one(pid_t pid, debug_breakpoint* bp)
         return step_over_breakpoint(pid, bp);
     }
 
+    bp->was_continue = 0;
     if (ptrace(PTRACE_SINGLESTEP, pid, 0, 0)) {
         perror("ptrace10");
         return -1;
@@ -183,6 +185,7 @@ int step_over_breakpoint(pid_t pid, debug_breakpoint* bp)
     }
     disable_breakpoint(pid, bp);
     int ret;
+    bp->was_continue = 0;
     if ((ret = step_one(pid, bp)) <= 0) {
         return ret;
     }
@@ -203,6 +206,7 @@ int resume_from_breakpoint(pid_t pid, debug_breakpoint* bp)
         }
     }
 
+    bp->was_continue = 1;
     if (ptrace(PTRACE_CONT, pid, 0, 0) < 0) {
         perror("ptrace11");
         return -1;

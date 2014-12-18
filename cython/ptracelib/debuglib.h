@@ -54,6 +54,13 @@ void dump_process_memory(pid_t pid, unsigned from_addr, unsigned to_addr);
 struct debug_breakpoint_t {
     void* addr;
     unsigned orig_data;
+    // Terrible, but the state of "if you were continuing" or "if you were stepping" is kept here.
+    // This allows us to know what to do when "step is called".
+    // If we were continuing:
+    //   Run the previous instruction and this one
+    // If we were stepping
+    //   Just run this instruction
+    int was_continue; // Terrible, but the stat
 };
 typedef struct debug_breakpoint_t debug_breakpoint;
 
