@@ -22,7 +22,7 @@ class Pygdb:
         return [('b', self.add_breakpoint),
                 ('gb', self.get_breakpoints),
                 ('f', self.get_functions),
-                ('load', self.load_program),
+                ('exec-file', self.load_program),
                 ('run', self.run),
                 ('c', self.cont),
                 ('regs', self.get_regs),
