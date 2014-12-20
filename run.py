@@ -3,6 +3,8 @@ import inspect
 import cyout.use_dwarf
 import os
 from cyout.use_debuglib import *
+import sys
+import argparse
 
 class NotRunningException(Exception):
     pass
@@ -13,10 +15,12 @@ class NotLoadedException(Exception):
 class Pygdb:
     WAIT_EXITED = 0
     WAIT_STOPPED = 1
-    def __init__(self):
+    def __init__(self, progname=None):
         self.breakpoints = []
         self.loaded = False
         self.running = False
+        if progname:
+            self.load_program(progname)
 
     def get_methods(self):
         return [('b', self.add_breakpoint),
@@ -27,6 +31,7 @@ class Pygdb:
                 ('c', self.cont),
                 ('regs', self.get_regs),
                 ('s', self.step),
+                ('q', self.quit),
                 ('example', self.example)]
     def step(self):
         if not self.running:
@@ -52,6 +57,9 @@ class Pygdb:
     def get_breakpoints(self):
         print 'breakpoints', self.breakpoints
         return self.breakpoints
+
+    def quit(self):
+        sys.exit(0)
 
     def get_regs(self):
         print 'eip:', hex(pyget_child_eip(self.child_pid))
@@ -80,11 +88,14 @@ class Pygdb:
     # TODO there should be one continue, not a start and continue
 
     def load_program(self, progname):
-        print 'loading'
         self.progname = progname
         self.child_pid = os.fork()
         if self.child_pid == 0:
-            pyrun_target(progname)
+            try:
+                pyrun_target(progname)
+            except Exception as e:
+                print 'Could not run the program:', e
+                sys.exit(0)
         elif self.child_pid < 0:
             raise Exception("Error: Fork")
         self.loaded = True
@@ -129,7 +140,6 @@ def take_input(pygdb, inp):
         method(*(parts[1:]))
         return True
     except StopIteration:
-        print 'No such method!'
         pygdb.help()
     except TypeError as e:
         print 'TypeError:', e
@@ -141,7 +151,11 @@ def take_input(pygdb, inp):
     return False
 
 if __name__ == "__main__":
-    pygdb = Pygdb()
+    parser = argparse.ArgumentParser(description="calculate X to the power of Y")
+    parser.add_argument("program", type=str, help="The file to debug", nargs='?')
+    args = parser.parse_args()
+
+    pygdb = Pygdb(args.program)
     while True:
         take_input(pygdb, raw_input(">>> "))
 

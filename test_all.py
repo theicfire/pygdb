@@ -150,7 +150,7 @@ class TestInput:
     def test_breakpoint_in_loop(self, pygdb, capsys):
         take_input(pygdb, 'b 0x8048414')
         assert 'NotLoadedException' in capsys_output_only(capsys)
-        take_input(pygdb, 'load traced_c_loop')
+        take_input(pygdb, 'exec-file traced_c_loop')
         take_input(pygdb, 'b 0x8048414')
         assert 'Adding breakpoint at  0x8048414' in capsys_output_only(capsys)
 
