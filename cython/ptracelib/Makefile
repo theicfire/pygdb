@@ -12,7 +12,7 @@ debuglib:
 	gcc -std=c99 -shared -o ../../cyout/libdebug.so debuglib.o
 
 traced_c_loop:
-	gcc -Wall -Wextra -std=c99 -o traced_c_loop traced_c_loop.c
+	gcc -g -Wall -Wextra -std=c99 -o traced_c_loop traced_c_loop.c
 
 py: debuglib traced_c_loop
 	gcc -Wall -fPIC -Wextra -std=c99 -c debuglib.c
@@ -32,9 +32,9 @@ run_with_lib: with_lib
 
 hello:
 ifeq ($(LBITS),64) # 64 bit
-	nasm -f elf64 -o hello.o hello.asm
+	nasm -g -f elf64 -o hello.o hello.asm
 else # 32 bit
-	nasm -f elf32 -o hello.o hello.asm
+	nasm -g -f elf32 -o hello.o hello.asm
 endif
 	ld -o hello hello.o
 

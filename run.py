@@ -36,16 +36,16 @@ class Pygdb:
         return s
 
     def example(self):
-        self.load_program('traced_c_loop')
-        self.add_breakpoint(0x8048414)
+        self.load_program('hello')
+        self.add_breakpoint(0x8048080)
         self.run()
 
     def add_breakpoint(self, loc):
         if not self.loaded:
             raise NotLoadedException("Load the program before adding breakpoints")
-        print 'Adding breakpoint at ', loc
         if type(loc) == str:
             loc = int(loc, 16)
+        print 'Adding breakpoint at ', hex(loc)
         self.breakpoints.append(loc)
         pycreate_breakpoint(self.child_pid, loc)
 
