@@ -65,7 +65,7 @@ long get_child_eip(pid_t pid)
 }
 
 
-void dump_process_memory(pid_t pid, unsigned from_addr, int size)
+void dump_process_memory(pid_t pid, unsigned from_addr, int size, char* mem)
 {
     // TODO assert(size >= 0);
     procmsg("Dump of %d's memory [0x%08X : 0x%08X]\n", pid, from_addr, from_addr + size);
@@ -77,6 +77,7 @@ void dump_process_memory(pid_t pid, unsigned from_addr, int size)
         }
         // TODO error here.. don't know what to do about unsigned though
         printf("  0x%08X:  %02x\n", from_addr + size, word & 0xFF);
+        mem[i] = word & 0xFF;
     }
 }
 
