@@ -44,8 +44,12 @@ void run_debugger(pid_t child_pid)
         ** execution until it either exits or hits the
         ** breakpoint again.
         */
-        procmsg("child stopped at breakpoint. EIP = 0x%08X\n", get_child_eip(child_pid));
-        procmsg("resuming\n");
+        long eip = get_child_eip(child_pid);
+        procmsg("my child stopped at breakpoint. EIP = 0x%08X\n", eip);
+
+        dump_process_memory(child_pid, eip, eip + 3);
+
+        procmsg("now resuming\n");
         int rc = resume_from_breakpoint(child_pid, bp);
 
         if (rc == 0) {

@@ -70,7 +70,7 @@ void dump_process_memory(pid_t pid, unsigned from_addr, unsigned to_addr)
     procmsg("Dump of %d's memory [0x%08X : 0x%08X]\n", pid, from_addr, to_addr);
     for (unsigned addr = from_addr; addr <= to_addr; ++addr) {
         unsigned word;
-        if ((int) (word = ptrace(PTRACE_PEEKTEXT, pid, addr, 0)) < 0) {
+        if ((int) (word = ptrace(PTRACE_PEEKTEXT, pid, addr, 0)) == -1 && errno != 0) {
             perror("ptrace3");
             return;
         }
@@ -88,7 +88,10 @@ void dump_process_memory(pid_t pid, unsigned from_addr, unsigned to_addr)
 static void enable_breakpoint(pid_t pid, debug_breakpoint* bp)
 {
     assert(bp);
-    bp->orig_data = ptrace(PTRACE_PEEKTEXT, pid, bp->addr, 0);
+    if ((int) (bp->orig_data = ptrace(PTRACE_PEEKTEXT, pid, bp->addr, 0)) == -1 && errno != 0) {
+        perror("ptrace");
+        return;
+    }
     if (ptrace(PTRACE_POKETEXT, pid, bp->addr, (bp->orig_data & ~(0xFF)) | 0xCC) < 0) {
         perror("ptrace5");
         return;
@@ -102,7 +105,11 @@ static void enable_breakpoint(pid_t pid, debug_breakpoint* bp)
 static void disable_breakpoint(pid_t pid, debug_breakpoint* bp)
 {
     assert(bp);
-    unsigned data = ptrace(PTRACE_PEEKTEXT, pid, bp->addr, 0);
+    unsigned data;
+    if ((int) (data = ptrace(PTRACE_PEEKTEXT, pid, bp->addr, 0)) == -1 && errno != 0) {
+        perror("ptrace");
+        return;
+    }
     assert((data & 0xFF) == 0xCC);
     if (ptrace(PTRACE_POKETEXT, pid, bp->addr, (data & ~(0xFF)) | (bp->orig_data & 0xFF)) < 0) {
         perror("ptrace7");
