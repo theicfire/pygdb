@@ -21,6 +21,7 @@ cdef extern from "debuglib.h":
     void run_target(const char* programname)
     int wait_common()
     int step_one(pid_t pid, debug_breakpoint* bp)
+    void dump_process_memory(pid_t pid, unsigned from_addr, int size, char* mem)
 
 
 cdef debug_breakpoint* bp_global
@@ -49,6 +50,11 @@ def pyresume_from_breakpoint(int child_pid):
 
 def pyrun_target(char* progname):
     run_target(progname)
+
+def pyread_memory(int child_pid, unsigned from_addr, int size):
+    mem = "a" * size # TODO better way to make a buffer
+    dump_process_memory(child_pid, from_addr, size, mem)
+    return [ord(x) for x in mem]
 
 def pystep(int child_pid):
     return step_one(child_pid, bp_global)

@@ -123,6 +123,13 @@ class TestAll:
             pygdb.cont()
         pygdb.cleanup_breakpoint()
 
+    def test_fns(self, pygdb):
+        pygdb.load_program('tracedprog2')
+        mem = pygdb.read_memory(0x80483e4, 3)
+        assert mem[0] == 0x55
+        assert mem[1] == 0x89
+        assert mem[2] == 0xe5
+
 class TestInput:
     def test_fns_called(self, monkeypatch, pygdb):
         self.call_count = 0

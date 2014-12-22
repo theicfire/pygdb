@@ -127,6 +127,9 @@ class Pygdb:
         elif s != 1:
             raise Exception('Unexpected status {}'.format(s))
 
+    def read_memory(self, addr, size):
+        return pyread_memory(self.child_pid, addr, size)
+
     def help(self):
         print "Possible queries:"
         print [x[0] for x in self.get_methods()]
