@@ -65,17 +65,18 @@ long get_child_eip(pid_t pid)
 }
 
 
-void dump_process_memory(pid_t pid, unsigned from_addr, unsigned to_addr)
+void dump_process_memory(pid_t pid, unsigned from_addr, int size)
 {
-    procmsg("Dump of %d's memory [0x%08X : 0x%08X]\n", pid, from_addr, to_addr);
-    for (unsigned addr = from_addr; addr <= to_addr; ++addr) {
+    // TODO assert(size >= 0);
+    procmsg("Dump of %d's memory [0x%08X : 0x%08X]\n", pid, from_addr, from_addr + size);
+    for (int i = 0; i < size; i++) {
         unsigned word;
-        if ((int) (word = ptrace(PTRACE_PEEKTEXT, pid, addr, 0)) == -1 && errno != 0) {
+        if ((int) (word = ptrace(PTRACE_PEEKTEXT, pid, from_addr + i, 0)) == -1 && errno != 0) {
             perror("ptrace3");
             return;
         }
         // TODO error here.. don't know what to do about unsigned though
-        printf("  0x%08X:  %02x\n", addr, word & 0xFF);
+        printf("  0x%08X:  %02x\n", from_addr + size, word & 0xFF);
     }
 }
 
