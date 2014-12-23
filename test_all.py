@@ -6,11 +6,15 @@ import sys
 def pygdb():
     return Pygdb()
 
-def capsys_output_only(capsys):
-    out, err = capsys.readouterr()
+def capsys_output_only(cap):
+    out, err = cap.readouterr()
     print out # Put it back out
     assert err == ''
     return out
+
+def capfd_output_only(cap):
+    return capsys_output_only(cap)
+
 
 class TestAll:
     def test_breakpoints(self, pygdb):
@@ -204,13 +208,19 @@ class TestInput:
         take_input(pygdb, 'read 0x8048080 4')
         assert "0x8048080: ['0xcc', '0x7', '0x0', '0x0']" in capsys_output_only(capsys)
 
-    def test_breakpoint_read_mem(self, pygdb, capsys):
+    def test_breakpoint_set_mem(self, pygdb, capsys):
         take_input(pygdb, 'example')
         take_input(pygdb, 'read 0x8048080 4')
         assert "0x8048080: ['0xcc', '0x7', '0x0', '0x0']" in capsys_output_only(capsys)
         take_input(pygdb, 'set 0x8048080 0x11 0x12')
         take_input(pygdb, 'read 0x8048080 4')
         assert "0x8048080: ['0x11', '0x12', '0x0', '0x0']" in capsys_output_only(capsys)
+
+    def test_breakpoint_set_mem_cool(self, pygdb, capfd):
+        take_input(pygdb, 'example')
+        take_input(pygdb, 'set 0x80490b4 0x49')
+        take_input(pygdb, 'c')
+        assert "Iello," in capfd_output_only(capfd)
 
 
 if __name__ == "__main__":
