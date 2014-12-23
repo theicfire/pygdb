@@ -32,6 +32,7 @@ class Pygdb:
                 ('regs', self.get_regs),
                 ('s', self.step),
                 ('q', self.quit),
+                ('read', self.read_memory),
                 ('example', self.example)]
     def step(self):
         if not self.running:
@@ -128,7 +129,13 @@ class Pygdb:
             raise Exception('Unexpected status {}'.format(s))
 
     def read_memory(self, addr, size):
-        return pyread_memory(self.child_pid, addr, size)
+        if type(addr) == str:
+            addr = int(addr, 16)
+        if type(size) == str:
+            size = int(size)
+        ret = pyread_memory(self.child_pid, addr, size)
+        print '{}: {}'.format(hex(addr), map(hex, ret))
+        return ret
 
     def help(self):
         print "Possible queries:"
