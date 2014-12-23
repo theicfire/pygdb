@@ -33,6 +33,7 @@ class Pygdb:
                 ('s', self.step),
                 ('q', self.quit),
                 ('read', self.read_memory),
+                ('set', self.set_memory_wrap),
                 ('example', self.example)]
     def step(self):
         if not self.running:
@@ -136,6 +137,9 @@ class Pygdb:
         ret = pyread_memory(self.child_pid, addr, size)
         print '{}: {}'.format(hex(addr), map(hex, ret))
         return ret
+
+    def set_memory_wrap(self, addr, *mem):
+        self.set_memory(addr, [int(x, 16) for x in mem])
 
     def set_memory(self, addr, mem):
         if type(addr) == str:

@@ -204,6 +204,14 @@ class TestInput:
         take_input(pygdb, 'read 0x8048080 4')
         assert "0x8048080: ['0xcc', '0x7', '0x0', '0x0']" in capsys_output_only(capsys)
 
+    def test_breakpoint_read_mem(self, pygdb, capsys):
+        take_input(pygdb, 'example')
+        take_input(pygdb, 'read 0x8048080 4')
+        assert "0x8048080: ['0xcc', '0x7', '0x0', '0x0']" in capsys_output_only(capsys)
+        take_input(pygdb, 'set 0x8048080 0x11 0x12')
+        take_input(pygdb, 'read 0x8048080 4')
+        assert "0x8048080: ['0x11', '0x12', '0x0', '0x0']" in capsys_output_only(capsys)
+
 
 if __name__ == "__main__":
     pygdb = Pygdb()
