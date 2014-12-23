@@ -1,10 +1,13 @@
+export LD_LIBRARY_PATH = $(shell echo `pwd`/../../cyout:`pwd`/../../cyout/32:`pwd`/../../cyout/64:$$LD_LIBRARY_PATH)
+export LIBRARY_PATH=$(LD_LIBRARY_PATH)
 LBITS := $(shell getconf LONG_BIT)
+
 all: with_lib
 
 test: clean debuglib traced_c_loop hello
 	cp traced_c_loop tests/
 	gcc -Wall -I. -L../../cyout -Wextra -std=c99 -o tests/test_all tests/test_all.c -ldebug
-	LD_LIBRARY_PATH=`pwd`/../../cyout:$LD_LIBRARY_PATH ./tests/test_all
+	./tests/test_all
 
 debuglib:
 	#gcc -Wall -Wextra -std=c99 -O2 -c debuglib.c # Works for normal c
@@ -17,18 +20,18 @@ traced_c_loop:
 py: debuglib traced_c_loop
 	gcc -Wall -fPIC -Wextra -std=c99 -c debuglib.c
 	gcc -std=c99 -shared -o ../../cyout/libdebug.so debuglib.o
-	LDFLAGS="-L../../cyout/ -L." python setup.py build_ext --inplace
+	python setup.py build_ext --inplace
 	cp use_debuglib.so ../../cyout/ # TODO better way
 
 run-py:
-	LD_LIBRARY_PATH=`pwd`/../../cyout:$LD_LIBRARY_PATH python use.py
+	python use.py
 
 with_lib: debuglib traced_c_loop
 	gcc -Wall -Wextra -std=c99 -c bp_use_lib.c
 	gcc -Wall -L../../cyout/ -Wextra -std=c99 -o bp_use_lib bp_use_lib.o -ldebug
 
 run_with_lib: with_lib
-	LD_LIBRARY_PATH=`pwd`/../../cyout:$LD_LIBRARY_PATH ./bp_use_lib traced_c_loop
+	./bp_use_lib traced_c_loop
 
 hello:
 ifeq ($(LBITS),64) # 64 bit
