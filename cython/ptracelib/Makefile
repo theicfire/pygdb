@@ -2,7 +2,7 @@ export LD_LIBRARY_PATH = $(shell echo `pwd`/../../cyout:`pwd`/../../cyout/32:`pw
 export LIBRARY_PATH=$(LD_LIBRARY_PATH)
 LBITS := $(shell getconf LONG_BIT)
 
-all: with_lib
+all: py
 
 test: clean debuglib traced_c_loop hello
 	cp traced_c_loop tests/
@@ -17,7 +17,7 @@ debuglib:
 traced_c_loop:
 	gcc -g -Wall -Wextra -std=c99 -o traced_c_loop traced_c_loop.c
 
-py: debuglib traced_c_loop
+py: debuglib traced_c_loop hello
 	gcc -Wall -fPIC -Wextra -std=c99 -c debuglib.c
 	gcc -std=c99 -shared -o ../../cyout/libdebug.so debuglib.o
 	python setup.py build_ext --inplace

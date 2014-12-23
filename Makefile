@@ -1,7 +1,17 @@
 export LD_LIBRARY_PATH = $(shell echo `pwd`/cyout:`pwd`/cyout/32:`pwd`/cyout/64:$$LD_LIBRARY_PATH)
 export LIBRARY_PATH=$(LD_LIBRARY_PATH)
 
-all: binary_programs
+cython/ptracelib/makedone: cython/ptracelib/*.c cython/ptracelib/*.h cython/ptracelib/*.pyx cython/ptracelib/*.py cython/ptracelib/*.asm
+	cd cython/ptracelib && $(MAKE)
+	touch cython/ptracelib/makedone
+ptracelib: cython/ptracelib/makedone
+
+cython/dwarflib/makedone: cython/dwarflib/*.c cython/dwarflib/*.h cython/dwarflib/*.pyx cython/dwarflib/*.py
+	cd cython/dwarflib && $(MAKE) standard
+	touch cython/dwarflib/makedone
+dwarflib: cython/dwarflib/makedone
+
+all: binary_programs dwarflib ptracelib
 
 test: binary_programs
 	py.test
@@ -14,16 +24,13 @@ test-all: test
 	cd cython/ptracelib && $(MAKE) test
 
 
-traced_c_loop:
-	cd cython/ptracelib && $(MAKE) traced_c_loop
+traced_c_loop: ptracelib
 	cp cython/ptracelib/traced_c_loop .
 
-hello:
-	cd cython/ptracelib && $(MAKE) hello
+hello: ptracelib
 	cp cython/ptracelib/hello .
 
-tracedprog2:
-	cd cython/dwarflib && $(MAKE) tracedprog2
+tracedprog2: dwarflib
 	cp cython/dwarflib/tracedprog2 .
 
 binary_programs: traced_c_loop tracedprog2 hello
@@ -46,3 +53,5 @@ clean: sub-clean
 	rm -f *.pyc
 	rm -f tracedprog2 traced_c_loop hello
 	rm -f cyout/libdebug.so cyout/libdwarf_get_func_addr.so cyout/use_debuglib.so cyout/use_dwarf.so
+	rm -f cython/ptracelib/ptracebuilt
+	rm -f cython/ptracelib/makedone cython/dwarflib/makedone
