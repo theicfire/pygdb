@@ -38,3 +38,7 @@ All the tests should pass!
 * Run the binary: `run`
 * Get the registers. You'll notice eip is one after our breakpoint. `regs`
 * Continue (Should finish): `c`
+
+## Future Priorities
+* Get this to run on 64 bit machines
+* Add any number of features that GDB has
