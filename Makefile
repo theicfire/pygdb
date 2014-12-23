@@ -1,10 +1,13 @@
+export LD_LIBRARY_PATH = $(shell echo `pwd`/cyout:`pwd`/cyout/32:`pwd`/cyout/64:$$LD_LIBRARY_PATH)
+export LIBRARY_PATH=$(LD_LIBRARY_PATH)
+
 all: binary_programs
 
 test: binary_programs
-	LD_LIBRARY_PATH=`pwd`/cyout:$LD_LIBRARY_PATH py.test
+	py.test
 
 test-s: binary_programs
-	LD_LIBRARY_PATH=`pwd`/cyout:$LD_LIBRARY_PATH py.test -s
+	py.test -s
 
 test-all: test
 	# TODO dwarflib tests
@@ -28,7 +31,7 @@ binary_programs: traced_c_loop tracedprog2 hello
 testwatch:
 	while true; do inotifywait -e modify *.py || make test; done
 interactive:
-	LD_LIBRARY_PATH=`pwd`/cyout:$LD_LIBRARY_PATH python run.py
+	python run.py
 
 sub-make: sub-clean
 	cd cython/dwarflib && make standard && cd ../..
@@ -39,9 +42,10 @@ sub-clean:
 	cd cython/ptracelib && make clean && cd ../..
 
 run-fns:
-	LD_LIBRARY_PATH=`pwd`/cyout:$LD_LIBRARY_PATH python use.py
+	python use.py
 
 clean: sub-clean
 	rm -rf __pycache__
 	rm -f *.pyc
 	rm -f tracedprog2 traced_c_loop hello
+	rm -f cyout/libdebug.so cyout/libdwarf_get_func_addr.so cyout/use_debuglib.so cyout/use_dwarf.so
