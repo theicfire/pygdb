@@ -82,7 +82,6 @@ int list_func_in_die(Dwarf_Debug dgb, Dwarf_Die the_die, struct func_info *finfo
     assert(strlen(die_name) + 1 <= MAX_FNAME_LEN);
     memcpy(finfo->name, die_name, strlen(die_name) + 1);
     finfo->low_pc = lowpc;
-    free(attrs);
     return 0;
 }
 

@@ -11,7 +11,7 @@ justc: tracedprog2
 	LD_LIBRARY_PATH=`pwd`/../../cyout:$LD_LIBRARY_PATH ./dwarf.out tracedprog2
 
 valgrind: all
-	valgrind -v ./dwarf_get_func_addr tracedprog2
+	LD_LIBRARY_PATH=`pwd`/../../cyout:$LD_LIBRARY_PATH valgrind ./dwarf.out tracedprog2
 
 standard: all
 	gcc -std=c99 -Wall -fPIC -c dwarf_get_func_addr.c
