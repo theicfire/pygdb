@@ -6,7 +6,7 @@ tracedprog2:
 run: all
 	./dwarf_get_func_addr tracedprog2
 
-justc:
+justc: tracedprog2
 	gcc -std=c99 -Wall -L../../cyout/ -fPIC -o dwarf.out dwarf_get_func_addr.c -ldwarf -lelf
 	LD_LIBRARY_PATH=`pwd`/../../cyout:$LD_LIBRARY_PATH ./dwarf.out tracedprog2
 
