@@ -22,10 +22,12 @@ standard: all
 	LDFLAGS="-L../../cyout/ -L." python setup.py build_ext --inplace
 	cp use_dwarf.so ../../cyout/ # TODO can be done in setup.py? Or call setup.py from diff dir?
 
+to_clean =
+to_clean += tracedprog2 dwarf_get_func_addr
+to_clean += use_dwarf.c *.so helloworld.c dwarf.out
+to_clean += build
+to_clean += *.a
+to_clean += *.o
 .PHONY : clean
 clean : 
-	rm -rf tracedprog2 dwarf_get_func_addr
-	rm -f use_dwarf.c *.so helloworld.c dwarf.out
-	rm -rf build
-	rm -f *.a
-	rm -f *.o
+	rm -rf $(to_clean)

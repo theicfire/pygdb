@@ -41,10 +41,12 @@ else # 32 bit
 endif
 	ld -o hello hello.o
 
+to_clean =
+to_clean += *.o bp_use_lib traced_c_loop use_debuglib.c
+to_clean += build
+to_clean += hello
+to_clean += *.so
+to_clean += tests/traced_c_loop tests/test_all
 .PHONY : clean
 clean :
-	rm -f *.o bp_use_lib traced_c_loop use_debuglib.c
-	rm -rf build
-	rm -f hello
-	rm -f *.so
-	rm -f tests/traced_c_loop tests/test_all
+	rm -rf $(to_clean)
