@@ -38,7 +38,7 @@ binary_programs: traced_c_loop tracedprog2 hello
 
 testwatch:
 	while true; do inotifywait -e modify *.py || $(MAKE) test; done
-interactive:
+interactive: all
 	python run.py
 
 sub-make: sub-clean
