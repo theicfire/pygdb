@@ -123,12 +123,31 @@ class TestAll:
             pygdb.cont()
         pygdb.cleanup_breakpoint()
 
-    def test_fns(self, pygdb):
+    def test_read_memory(self, pygdb):
         pygdb.load_program('tracedprog2')
         mem = pygdb.read_memory(0x80483e4, 3)
         assert mem[0] == 0x55
         assert mem[1] == 0x89
         assert mem[2] == 0xe5
+        mem = pygdb.read_memory(0x80483e5, 2)
+        assert mem[0] == 0x89
+        assert mem[1] == 0xe5
+
+    def test_set_memory(self, pygdb):
+        pygdb.load_program('tracedprog2')
+        mem = pygdb.read_memory(0x80483e4, 3)
+        assert mem[0] == 0x55
+        assert mem[1] == 0x89
+        assert mem[2] == 0xe5
+
+        mem = 'a'
+        pygdb.set_memory(0x80483e4, mem)
+
+        mem = pygdb.read_memory(0x80483e4, 3)
+        assert mem[0] == ord('a')
+        assert mem[1] == 0x89
+        assert mem[2] == 0xe5
+# TODO test bad memory location
 
 class TestInput:
     def test_fns_called(self, monkeypatch, pygdb):

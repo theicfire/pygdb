@@ -65,7 +65,7 @@ long get_child_eip(pid_t pid)
 }
 
 
-void dump_process_memory(pid_t pid, unsigned from_addr, int size, char* mem)
+int dump_process_memory(pid_t pid, unsigned from_addr, int size, char* mem)
 {
     // TODO assert(size >= 0);
     procmsg("Dump of %d's memory [0x%08X : 0x%08X]\n", pid, from_addr, from_addr + size);
@@ -73,14 +73,33 @@ void dump_process_memory(pid_t pid, unsigned from_addr, int size, char* mem)
         unsigned word;
         if ((int) (word = ptrace(PTRACE_PEEKTEXT, pid, from_addr + i, 0)) == -1 && errno != 0) {
             perror("ptrace3");
-            return;
+            return -1;
         }
         // TODO error here.. don't know what to do about unsigned though
         printf("  0x%08X:  %02x\n", from_addr + size, word & 0xFF);
         mem[i] = word & 0xFF;
     }
+    return 0;
 }
 
+
+int change_process_memory(pid_t pid, unsigned from_addr, int size, char* mem)
+{
+    for (int i = 0; i < size; i++) {
+        unsigned word;
+        if ((int) (word = ptrace(PTRACE_PEEKTEXT, pid, from_addr + i, 0)) == -1 && errno != 0) {
+            perror("ptrace3");
+            return -1;
+        }
+        // TODO assuming don't have to be word aligned.. might have ot check this
+        // Seems to be true for my vagrant with peektext. I have a test for this
+        if (ptrace(PTRACE_POKETEXT, pid, from_addr + i, (word & ~(0xFF)) | mem[i]) < 0) {
+            perror("ptrace");
+            return -1;
+        }
+    }
+    return 0;
+}
 
 
 

@@ -45,7 +45,8 @@ long get_child_eip(pid_t pid);
 /* Display memory contents in the inclusive range [from_addr:to_addr] from the
 ** given process's address space.
 */
-void dump_process_memory(pid_t pid, unsigned from_addr, int size, char* mem);
+int dump_process_memory(pid_t pid, unsigned from_addr, int size, char* mem);
+int change_process_memory(pid_t pid, unsigned from_addr, int size, char* mem);
 
 
 /* Encapsulates a breakpoint. Holds the address at which the BP was placed

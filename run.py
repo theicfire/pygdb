@@ -137,6 +137,11 @@ class Pygdb:
         print '{}: {}'.format(hex(addr), map(hex, ret))
         return ret
 
+    def set_memory(self, addr, mem):
+        if type(addr) == str:
+            addr = int(addr, 16)
+        return pyset_memory(self.child_pid, addr, mem)
+
     def help(self):
         print "Possible queries:"
         print [x[0] for x in self.get_methods()]
