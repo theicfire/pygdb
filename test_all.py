@@ -138,11 +138,11 @@ class TestAll:
         mem = pygdb.read_memory(0x80483e5, 1)
         assert mem[0] == 0x89
 
-        mem = 'a'
+        mem = [0x11]
         pygdb.set_memory(0x80483e5, mem)
 
         mem = pygdb.read_memory(0x80483e5, 1)
-        assert mem[0] == ord('a')
+        assert mem[0] == 0x11
 # TODO test bad memory location
 
 class TestInput:

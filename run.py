@@ -140,7 +140,8 @@ class Pygdb:
     def set_memory(self, addr, mem):
         if type(addr) == str:
             addr = int(addr, 16)
-        return pyset_memory(self.child_pid, addr, mem)
+        mem_str = ''.join(map(chr, mem))
+        return pyset_memory(self.child_pid, addr, mem_str)
 
     def help(self):
         print "Possible queries:"
