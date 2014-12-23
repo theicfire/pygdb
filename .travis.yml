@@ -1,8 +1,7 @@
 language: python
-script: make test
+script: py.test
  
 install:
   - sudo apt-get update --fix-missing   
-  - sudo apt-get install -y nasm build-essential python-dev libdwarf-dev libelf-dev
-  - sudo pip install -U cython
-  - sudo pip install -U pytest
+  #- sudo apt-get install -y nasm build-essential python-dev libdwarf-dev libelf-dev
+  - sudo pip install requests
