@@ -133,6 +133,11 @@ class TestAll:
         assert mem[0] == 0x89
         assert mem[1] == 0xe5
 
+    def test_bad_read_memory(self, pygdb):
+        pygdb.load_program('tracedprog2')
+        with pytest.raises(Exception):
+            mem = pygdb.read_memory(0x99999, 3)
+
     def test_set_memory(self, pygdb):
         pygdb.load_program('tracedprog2')
         mem = pygdb.read_memory(0x80483e5, 1)
@@ -143,7 +148,12 @@ class TestAll:
 
         mem = pygdb.read_memory(0x80483e5, 1)
         assert mem[0] == 0x11
-# TODO test bad memory location
+
+    def test_bad_set(self, pygdb):
+        pygdb.load_program('tracedprog2')
+        with pytest.raises(ValueError):
+            mem = [500]
+            pygdb.set_memory(0x80483e5, mem)
 
 class TestInput:
     def test_fns_called(self, monkeypatch, pygdb):
