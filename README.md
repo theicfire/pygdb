@@ -1,10 +1,8 @@
 # Minimal C Debugger in Python
 
-The goal of this project is to make a c debugger, similar to gdb, in python. This is exclusively for educational purposes.
+The goal of this project is to make a c debugger, similar to gdb, in python. This is exclusively for educational purposes :)
 
 This debugger works by using the ptrace system call. A good chunk of the theory is [here](http://eli.thegreenplace.net/2011/01/23/how-debuggers-work-part-1/).
-
-
 
 ## Features
 * Read function names from binaries
