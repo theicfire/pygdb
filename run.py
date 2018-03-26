@@ -64,7 +64,14 @@ class Pygdb:
         sys.exit(0)
 
     def get_regs(self):
-        print 'eip:', hex(pyget_child_eip(self.child_pid))
+        regs = ['ebx', 'ecx', 'edx', 'esi', 'edi', 'ebp', 'eax', 'xds', 'xes', 'xfs', 'xgs', 'orig_eax', 'eip', 'xcs', 'eflags', 'esp', 'xss']
+
+        # print 'eip:', hex(pyget_child_eip(self.child_pid))
+        print 'all'
+        for i in range(len(regs)):
+            print regs[i], hex(pyget_child_reg(self.child_pid, i))
+
+
 
     def mem_peek(self, addr):
         print 'mem_peek', addr

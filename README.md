@@ -35,9 +35,12 @@ All the tests should pass!
 * Start the debugger: `make interactive`
 * Load the hello binary: `exec-file hello`
 * Set a breakpoint: `b 0x8048080`
-* Run the binary: `run`
+* Run the binary: `run`. Nothing will seem to happen, but the program has started to run and hit a breakpoint.
 * Get the registers. You'll notice eip is one after our breakpoint. `regs`
+* Step one instruction. `s`.
+* Get the registers again. `regs`. Notice that `edx == 0x7`, just like the assembly said it should have been.
 * Continue (Should finish): `c`
+* Quit: `q`
 
 ## Future Priorities
 * Get this to run on 64 bit machines

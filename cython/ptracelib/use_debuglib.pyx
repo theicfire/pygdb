@@ -12,6 +12,7 @@ cdef extern from "sys/ptrace.h" nogil: # TODO need nogil?
 
 cdef extern from "debuglib.h":
     long get_child_eip(pid_t pid)
+    long get_child_reg(pid_t pid, int offset)
     ctypedef struct debug_breakpoint: # TODO what is in here
         void* addr "addr"
         unsigned orig_data "orig_data"
@@ -68,4 +69,7 @@ def pystep(int child_pid):
 # TODO more efficient (code wise) way to wrap these c calls?
 def pyget_child_eip(int child_pid):
     return get_child_eip(child_pid)
+
+def pyget_child_reg(int child_pid, int offset):
+    return get_child_reg(child_pid, offset)
 

@@ -64,6 +64,20 @@ long get_child_eip(pid_t pid)
 #endif
 }
 
+long get_child_reg(pid_t pid, int offset)
+{
+    struct user_regs_struct regs;
+    if (ptrace(PTRACE_GETREGS, pid, 0, &regs) < 0) {
+        perror("ptrace3");
+        return -1;
+    }
+    long* regsArrayPtr = (long*) &regs;
+    if (offset >= 17) { // for 32 bit machine
+        perror("offset too large");
+    }
+    return regsArrayPtr[offset];
+}
+
 
 int dump_process_memory(pid_t pid, unsigned from_addr, int size, char* mem)
 {

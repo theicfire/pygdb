@@ -40,6 +40,7 @@ void run_target(const char* programname);
 /* Retrieve the child process's current instruction pointer value.
 */
 long get_child_eip(pid_t pid);
+long get_child_reg(pid_t pid, int offset);
 
 
 /* Display memory contents in the inclusive range [from_addr:to_addr] from the
